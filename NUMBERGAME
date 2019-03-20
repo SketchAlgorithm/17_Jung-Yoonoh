@@ -1,0 +1,41 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int tc, n;
+int board[50]; // board
+int cache[50][50];
+
+void init() {
+	for (int i = 0; i < 50; i++)
+		board[i] = -1001;
+	for (int i = 0; i < 50; i++)
+		for (int j = 0; j < 50; j++)
+			cache[i][j] = -50001;
+}
+
+int solve(int lfivot, int rfivot) {
+	if (lfivot > rfivot)
+		return 0;
+	int& ret = cache[lfivot][rfivot];
+	if (ret != -50001)
+		return ret;
+	ret = max(board[lfivot] - solve(lfivot + 1, rfivot), board[rfivot] - solve(lfivot, rfivot - 1)); // 가져가는 경우
+	if (rfivot - lfivot >= 1) { // 2장이상 제외 
+		ret = max(ret, -solve(lfivot + 2, rfivot));
+		ret = max(ret, -solve(lfivot, rfivot - 2));
+	}
+	return ret;
+}
+
+int main() {
+	cin >> tc;
+	while (tc--) {
+		cin >> n;
+		init();
+		for (int i = 0; i < n; i++)
+			cin >> board[i];
+		cout << solve(0,n-1) << endl;
+	}
+	return 0;
+}
